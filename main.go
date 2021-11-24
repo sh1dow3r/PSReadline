@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/csv"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,8 +12,8 @@ import (
 
 func check_errors(err error) {
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(0)
+		log.Fatal(err)
+		//os.Exit(0)
 	}
 }
 
@@ -35,9 +36,8 @@ func write_csvfile(csv_writer *csv.Writer, file_path string) {
 	for sc.Scan() {
 		line := sc.Text() // GET the command and append username string
 		setup := []string{username, line}
+		fmt.Println(setup)
 		csv_writer.Write(setup)
-		fmt.Println(username, "Executed: ", line)
-
 	}
 	check_errors(err)
 
