@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/csv"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -24,7 +25,7 @@ func check_user_files() (matches []string, err error) {
 
 }
 
-func write_csvfile(csv_file string, file_path string) {
+func write_csvfile(csv_writer *csv.Writer, file_path string) {
 	f, err := os.OpenFile(file_path, os.O_RDONLY, os.ModePerm)
 	check_errors(err)
 	defer f.Close()
@@ -32,7 +33,9 @@ func write_csvfile(csv_file string, file_path string) {
 	sc := bufio.NewScanner(f)
 	username := strings.Split(file_path, "\\")[2]
 	for sc.Scan() {
-		line := sc.Text() // GET the line string
+		line := sc.Text() // GET the command and append username string
+		setup := []string{username, line}
+		csv_writer.Write(setup)
 		fmt.Println(username, "Executed: ", line)
 
 	}
@@ -42,13 +45,20 @@ func write_csvfile(csv_file string, file_path string) {
 
 func main() {
 	// get all the powershell paths
-	csvfile := "powershell_history.csv"
+	csvfilename := "powershell_history.csv"
+	csvfile, err := os.Create(csvfilename)
+	check_errors(err)
+	csvwriter := csv.NewWriter(csvfile)
+	header := []string{"User", "Command"}
+	csvwriter.Write(header)
 	paths, err := check_user_files()
 	// check for errors, if so, exit gracefully
 	check_errors(err)
 	// loop through all the files and write them to a csv file with user appended
 	for _, path := range paths {
-		write_csvfile(csvfile, path)
+		write_csvfile(csvwriter, path)
 	}
+	csvwriter.Flush()
+	csvfile.Close()
 
 }
