@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/csv"
 	"fmt"
 	"log"
 	"os"
@@ -11,34 +10,28 @@ import (
 )
 
 func check_errors(err error) {
-	fmt.Println(err)
 	if err != nil {
-		log.Fatal(err)
-		//os.Exit(0)
+		log.Fatal("Fatal error:", err)
+		os.Exit(0)
 	}
 }
 
-func check_user_files() (matches []string, err error) {
-	userPaths := "C:\\Users\\"
-	all_occurrences, err := filepath.Glob(userPaths)
-	var list_of_all_occurrences []string	
-	for index, all_occurrences {
-		if 
-		append(list_of_all_occurrences, all_occurrences[index])
+func check_user_files(argument string) (matches []string, err error) {
+	pattern := ""
+	if argument == "All" || argument == "all" || argument == "ALL" {
+		pattern = "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\PowerShell\\PSReadLine\\ConsoleHost_history.txt"
+		fmt.Println(pattern)
+	} else {
+		pattern = "C:\\Users\\" + argument + "\\AppData\\Roaming\\Microsoft\\Windows\\PowerShell\\PSReadLine\\ConsoleHost_history.txt"
+		fmt.Println(pattern)
 	}
-	pattern := "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\PowerShell\\PSReadline\\ConsoleHost_history.txt"
-	fmt.Println(boll1)
+
 	all_occurrences, err := filepath.Glob(pattern)
-	print(all_occurrences)
 	check_errors(err)
-	fmt.Println(err)
-	fmt.Println(all_occurrences)
-
 	return all_occurrences, err
-
 }
 
-func write_csvfile(csv_writer *csv.Writer, file_path string) {
+func read_print_csv_entries(file_path string) {
 	f, err := os.OpenFile(file_path, os.O_RDWR, os.ModePerm)
 	check_errors(err)
 	defer f.Close()
@@ -47,30 +40,28 @@ func write_csvfile(csv_writer *csv.Writer, file_path string) {
 	username := strings.Split(file_path, "\\")[2]
 	for sc.Scan() {
 		line := sc.Text() // GET the command and append username string
-		setup := []string{username, line}
+		setup := username + ", " + line
 		fmt.Println(setup)
-		csv_writer.Write(setup)
 	}
-	check_errors(err)
-
 }
 
 func main() {
-	// get all the powershell paths
-	csvfilename := "powershell_history.csv"
-	csvfile, err := os.Create(csvfilename)
-	check_errors(err)
-	csvwriter := csv.NewWriter(csvfile)
-	header := []string{"User", "Command"}
-	csvwriter.Write(header)
-	paths, err := check_user_files()
-	// check for errors, if so, exit gracefully
-	check_errors(err)
-	// loop through all the files and write them to a csv file with user appended
-	for _, path := range paths {
-		write_csvfile(csvwriter, path)
-	}
-	csvwriter.Flush()
-	csvfile.Close()
+	argument_length := len(os.Args)
+	if argument_length != 2 {
+		fmt.Println("[E] Failed to run with the correct format...")
+		fmt.Println("Format: main.exe {All | <username>}")
+	} else {
+		argument := os.Args[1]
+		header := "User, Command"
+		fmt.Println(header)
+		fmt.Println(argument)
+		paths, err := check_user_files(argument)
+		// check for errors, if so, exit gracefully
+		check_errors(err)
 
+		// loop through all the files and write them to a csv file with user appended
+		for _, path := range paths {
+			read_print_csv_entries(path)
+		}
+	}
 }
