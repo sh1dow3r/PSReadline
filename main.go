@@ -30,10 +30,11 @@ func write_csvfile(csv_writer *csv.Writer, file_path string) {
 	f, err := os.OpenFile(file_path, os.O_RDWR, os.ModePerm)
 	check_errors(err)
 	defer f.Close()
-
+	fmt.Println("test#1")
 	sc := bufio.NewScanner(f)
 	username := strings.Split(file_path, "\\")[2]
 	for sc.Scan() {
+		fmt.Println("test#5")
 		line := sc.Text() // GET the command and append username string
 		setup := []string{username, line}
 		fmt.Println(setup)
@@ -56,9 +57,11 @@ func main() {
 	check_errors(err)
 	// loop through all the files and write them to a csv file with user appended
 	for _, path := range paths {
+		fmt.Println("test#4")
 		write_csvfile(csvwriter, path)
 	}
 	csvwriter.Flush()
 	csvfile.Close()
+	fmt.Println("test#11")
 
 }
