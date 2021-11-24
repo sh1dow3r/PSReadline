@@ -27,7 +27,7 @@ func check_user_files() (matches []string, err error) {
 }
 
 func write_csvfile(csv_writer *csv.Writer, file_path string) {
-	f, err := os.OpenFile(file_path, os.O_RDONLY, os.ModePerm)
+	f, err := os.OpenFile(file_path, os.O_WRONLY, os.ModePerm)
 	check_errors(err)
 	defer f.Close()
 
