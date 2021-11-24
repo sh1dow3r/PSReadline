@@ -24,7 +24,7 @@ func check_user_files() (matches []string, err error) {
 	var list_of_all_occurrences []string	
 	for index, all_occurrences {
 		if 
-		append(list_of_all_occurrences, all_occurrences[i])
+		append(list_of_all_occurrences, all_occurrences[index])
 	}
 	pattern := "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\PowerShell\\PSReadline\\ConsoleHost_history.txt"
 	fmt.Println(boll1)
