@@ -19,10 +19,10 @@ func check_errors(err error) {
 
 func check_user_files() (matches []string, err error) {
 	pattern := "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\PowerShell\\PSReadline\\ConsoleHost_history.txt"
-	fmt.Println("test#before 0")
 	all_occurrences, err := filepath.Glob(pattern)
-	fmt.Println("test#before after")
 	check_errors(err)
+	fmt.Println(err)
+	fmt.Println(all_occurrences)
 
 	return all_occurrences, err
 
